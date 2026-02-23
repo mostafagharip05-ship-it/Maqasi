@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maqasi Store</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+body {
+  margin:0;
+  font-family: 'Orbitron', sans-serif;
+  background:#0d0d0d;
+  color:#fff;
+}
+header {
+  text-align:center;
+  padding:30px;
+  background:#111;
+  box-shadow:0 0 20px #ff00ff;
+}
+header h1 {color:#ff00ff; font-size:36px; text-transform:uppercase; text-shadow:0 0 10px #ff00ff,0 0 20px #ff00ff;}
+header p {color:#aaa; font-size:14px;}
+.container {max-width:600px; margin:30px auto; position:relative;}
+.slider img {
+  width:100%;
+  border-radius:12px;
+  box-shadow:0 0 20px #ff00ff;
+  transition: all 0.5s;
+}
+.slider button {
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  background:#ff00ff;
+  border:none;
+  padding:10px;
+  cursor:pointer;
+  font-weight:bold;
+  border-radius:8px;
+  color:#000;
+  font-size:16px;
+}
+#prev {left:10px;}
+#next {right:10px;}
+.order-form {
+  max-width:500px;
+  margin:40px auto;
+  padding:20px;
+  border:2px solid #ff00ff;
+  border-radius:12px;
+  background:#111;
+}
+.order-form h2 {text-align:center; color:#ff00ff; margin-bottom:20px;}
+.order-form input, .order-form select {
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:6px;
+  border:1px solid #444;
+  background:#222;
+  color:#fff;
+}
+.order-form button {
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  background:#ff00ff;
+  border:none;
+  font-weight:bold;
+  border-radius:8px;
+  cursor:pointer;
+  color:#000;
+  font-size:16px;
+}
+.order-form button:hover {background:#ff66ff; color:#fff; transform: scale(1.05);}
+.orders-list {max-width:700px; margin:30px auto; padding:10px;}
+.order-item {
+  background:#222;
+  border-left:4px solid #ff00ff;
+  padding:12px;
+  margin-bottom:10px;
+  border-radius:6px;
+  animation: fadeIn 0.6s ease-in-out;
+}
+.order-item span {color:#00ffff; font-weight:bold;}
+.confirmed {border-left:4px solid #00ff00;}
+@keyframes fadeIn {
+  from {opacity:0; transform: translateY(10px);}
+  to {opacity:1; transform: translateY(0);}
+}
+footer {text-align:center; padding:40px; background:#111; color:#aaa; border-top:1px solid #333;}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Maqasi Store</h1>
+<p>Oversized Black Hoodie – "الرؤية هباب"</p>
+</header>
+
+<div class="container">
+  <div class="slider">
+    <img id="productImage" src="https://drive.google.com/uc?export=view&id=1TVpS97108BCsGb9N9BNe1YjeGmGS3O0Q" alt="Neon Hoodie">
+    <button id="prev">&lt;</button>
+    <button id="next">&gt;</button>
+  </div>
+</div>
+
+<div class="order-form">
+<h2>Place Your Order</h2>
+<input type="text" id="customerName" placeholder="Full Name">
+<input type="text" id="customerAddress" placeholder="Address">
+<input type="text" id="customerPhone" placeholder="Phone Number">
+<select id="sizeSelect">
+  <option value="">Select Size</option>
+  <option>XS</option>
+  <option>S</option>
+  <option>M</option>
+  <option>L</option>
+  <option>XL</option>
+  <option>XXL</option>
+</select>
+<input type="number" id="quantity" placeholder="Quantity" min="1" value="1">
+<button onclick="placeOrder()">Submit Order</button>
+</div>
+
+<div class="orders-list" id="ordersList"></div>
+
+<footer>
+<p>© 2026 Maqasi Store. All Rights Reserved</p>
+</footer>
+
+<script>
+let images = [
+  "https://drive.google.com/uc?export=view&id=1TVpS97108BCsGb9N9BNe1YjeGmGS3O0Q",
+  "https://drive.google.com/uc?export=view&id=1HGn1OO4pwIXbOwrWOmRGI6YvaDuvJWCd",
+  "https://drive.google.com/uc?export=view&id=1A7xyzJA-AxtJnVfTjP4YrpRE5EsI3CfR"
+];
+let currentIndex = 0;
+const productImage = document.getElementById('productImage');
+document.getElementById('prev').addEventListener('click', ()=>{
+  currentIndex = (currentIndex -1 + images.length) % images.length;
+  productImage.src = images[currentIndex];
+});
+document.getElementById('next').addEventListener('click', ()=>{
+  currentIndex = (currentIndex +1) % images.length;
+  productImage.src = images[currentIndex];
+});
+
+// Orders
+let orders = [];
+function placeOrder(){
+  const name = document.getElementById('customerName').value;
+  const address = document.getElementById('customerAddress').value;
+  const phone = document.getElementById('customerPhone').value;
+  const size = document.getElementById('sizeSelect').value;
+  const quantity = document.getElementById('quantity').value;
+
+  if(!name||!address||!phone||!size||!quantity){
+    alert('Please fill all fields');
+    return;
+  }
+
+  const order = {name,address,phone,product:'Neon Hoodie',size,quantity,status:'Pending Payment'};
+  orders.push(order);
+  renderOrders();
+  alert('Your order is being processed. Please transfer the amount via Vodafone Cash to 01022137466 and send a screenshot of the receipt on WhatsApp to confirm your order.');
+}
+
+function renderOrders(){
+  const list = document.getElementById('ordersList');
+  list.innerHTML='';
+  orders.forEach((o,i)=>{
+    const div = document.createElement('div');
+    div.className='order-item'+(o.status==='Confirmed'?' confirmed':'');
+    div.innerHTML=`<span>${o.name}</span> ordered <span>${o.product}</span> (${o.size}, Qty: ${o.quantity}) - Status: ${o.status} 
+    <button onclick="confirmOrder(${i})">Confirm Payment</button>`;
+    list.appendChild(div);
+  });
+}
+
+function confirmOrder(index){
+  orders[index].status='Confirmed';
+  renderOrders();
+  alert('Order Confirmed! Shipped within 2–7 days.');
+}
+</script>
+
+</body>
+</html>
